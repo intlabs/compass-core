@@ -69,7 +69,7 @@ echo 0 > /selinux/enforce
 ### Add epel repo
 sudo rpm -q epel-release
 if [ "$?" != "0" ]; then
-    sudo rpm -Uvh http://download.fedoraproject.org/pub/epel/${IMAGE_VERSION_MAJOR}/${IMAGE_ARCH}/epel-release-6-8.noarch.rpm >& /dev/null
+    sudo yum install -y epel-release >& /dev/null
     if [ "$?" != "0" ]; then
         echo "failed to install epel-release"
         exit 1
@@ -80,7 +80,6 @@ else
     echo "epel-release is already installed"
 fi
 
-sed -i 's/^mirrorlist=https/mirrorlist=http/g' /etc/yum.repos.d/epel.repo
 
 ### Add atomic repo
 sudo rpm -q atomic-release
