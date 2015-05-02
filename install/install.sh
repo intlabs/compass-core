@@ -165,20 +165,21 @@ if [ $? -ne 0 ]; then
     echo "There is no nic '$NIC' yet"
     exit 1
 fi
-sudo ifconfig $NIC | grep 'inet addr:' >& /dev/null
+
+sudo ifconfig $NIC | grep 'inet' >& /dev/null
 if [ $? -ne 0 ]; then
     echo "There is not any IP address assigned to the NIC '$NIC' yet, please assign an IP address first."
     exit 1
 fi
 
-export ipaddr=$(ifconfig $NIC | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}')
+export ipaddr=$(ifconfig $NIC | grep 'inet ' | cut -d: -f2 | awk '{ print $2}')
 loadvars IPADDR ${ipaddr}
 ipcalc $IPADDR -c
 if [ $? -ne 0 ]; then
     echo "ip addr $IPADDR format should be x.x.x.x"
     exit 1
 fi
-export netmask=$(ifconfig $NIC |grep Mask | cut -f 4 -d ':')
+export netmask=$(ifconfig $NIC |grep netmask | awk '{ print $4}' )
 loadvars NETMASK ${netmask}
 export netaddr=$(ipcalc $IPADDR $NETMASK -n |cut -f 2 -d '=')
 export netprefix=$(ipcalc $IPADDR $NETMASK -p |cut -f 2 -d '=')
